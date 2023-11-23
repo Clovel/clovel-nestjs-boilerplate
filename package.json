@@ -7,13 +7,15 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "nest start --watch",
+    "dev:db": "docker compose -f .docker/docker-compose.dev.yml up -d",
     "start": "nest start",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint-fix": "eslint . --fix --ext .js,.jsx,.ts,.tsx"
+    "lint-fix": "eslint . --fix --ext .js,.jsx,.ts,.tsx",
+    "prisma:gen": "prisma generate"
   },
   "engines": {
     "node": ">=20.0.0 <21.0.0",
@@ -24,6 +26,7 @@
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@prisma/client": "^5.6.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "reflect-metadata": "^0.1.13",
@@ -47,6 +50,7 @@
     "eslint-plugin-n": "^16.3.1",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-promise": "^6.1.1",
+    "prisma": "^5.6.0",
     "source-map-support": "^0.5.21",
     "typescript": "^5.1.3"
   }

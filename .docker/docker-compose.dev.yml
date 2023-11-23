@@ -1,0 +1,32 @@
+version: "3.9"
+
+name: clovel-nestjs-boilerplate-app
+
+services:
+  postgres:
+    image: postgres:15.3-bookworm
+    container_name: clovel-nestjs-boilerplate-app-postgres-db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      PGDATA: /data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - clovel-nestjs-boilerplate-app-postgres-db_data:/data/postgres
+    networks:
+      - clovel-nestjs-boilerplate-app_network
+
+networks:
+  clovel-nestjs-boilerplate-app_network:
+    driver: bridge
+
+volumes:
+  clovel-nestjs-boilerplate-app-postgres-db_data:
+  clovel-nestjs-boilerplate-app-pgadmin_data:

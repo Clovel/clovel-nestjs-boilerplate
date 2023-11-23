@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+enum Status {
+  ONLINE
+  OFFLINE
+}
+
+model User {
+  id         Int     @default(autoincrement()) @id
+  email      String  @unique
+  password   String
+  firstName  String?
+  lastName   String?
+  phone      String?
+  avatar     String?
+
+  isActive          Boolean  @default(true)
+  hasValidatedEmail Boolean  @default(false)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  status             Status   @default(OFFLINE)
+  lastConnectionDate DateTime @default(now())
+}
