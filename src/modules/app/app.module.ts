@@ -3,9 +3,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 /* Module imports -------------------------------------- */
+import appConfig from 'modules/config/app.config';
+import { AuthModule } from 'modules/auth/auth.module';
+import { UsersModule } from 'modules/users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import appConfig from 'modules/config/app.config';
 
 /* App module ------------------------------------------ */
 @Module({
@@ -16,12 +18,14 @@ import appConfig from 'modules/config/app.config';
         appConfig,
       ],
     }),
-  ],
-  controllers: [
-    AppController,
+    AuthModule,
+    UsersModule,
   ],
   providers: [
     AppService,
+  ],
+  controllers: [
+    AppController,
   ],
 })
 

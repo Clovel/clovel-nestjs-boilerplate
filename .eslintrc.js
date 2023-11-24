@@ -206,7 +206,7 @@ const eslintConfig = {
       'after',
     ],
     'symbol-description': 'warn',
-    'no-useless-constructor': 'warn',
+    'no-useless-constructor': 'off',
     '@spence1115/modules-newlines/import-declaration-newline': 'warn',
     '@spence1115/modules-newlines/export-declaration-newline': 'warn',
     'promise/always-return': [
@@ -264,6 +264,13 @@ const eslintConfig = {
     ],
     'no-use-before-define': [
       'off',
+    ],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        ignoreRestSiblings: true,
+      },
     ],
     '@typescript-eslint/no-use-before-define': [
       'warn',

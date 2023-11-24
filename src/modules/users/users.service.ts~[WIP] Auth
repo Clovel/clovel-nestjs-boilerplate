@@ -1,0 +1,144 @@
+/* Framework imports ----------------------------------- */
+import {
+  Injectable,
+  UnauthorizedException,
+  HttpException,
+} from '@nestjs/common';
+import { PrismaService } from 'modules/prisma/prisma.service';
+
+/* Type imports ---------------------------------------- */
+import type {
+  User as UserModel,
+  Prisma,
+} from '@prisma/client';
+import type { UserDTO } from './users.types';
+import { bcryptCheck } from 'helpers/bcryptTools';
+
+/* Users module service -------------------------------- */
+@Injectable()
+export class UsersService {
+  constructor(private prisma: PrismaService) {}
+
+  async user(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<UserDTO | null> {
+    const foundUser: UserModel | null = await this.prisma.user.findUnique({
+      where: userWhereUniqueInput,
+    });
+
+    if(!foundUser) {
+      return null;
+    }
+
+    const {
+      password: _password,
+      ...result
+    } = foundUser;
+
+    return result;
+  }
+
+  async users(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
+    // orderBy?: Prisma.UserOrderByWithRelationInput;
+  }): Promise<UserDTO[]> {
+    const {
+      skip,
+      take,
+      cursor,
+      where,
+      // orderBy
+    } = params;
+
+    const foundUsers: UserModel[] = await this.prisma.user.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      // orderBy,
+    });
+
+    return foundUsers.map<UserDTO>(
+      ({
+        password: _password,
+        ...result
+      }) => result
+    );
+  }
+
+  async createUser(data: Prisma.UserCreateInput): Promise<UserDTO> {
+    const createdUser: UserModel = await this.prisma.user.create({
+      data,
+    });
+
+    const {
+      password: _password,
+      ...result
+    } = createdUser;
+
+    return result;
+  }
+
+  async updateUser(
+    params: {
+      where: Prisma.UserWhereUniqueInput;
+      data: Prisma.UserUpdateInput;
+    }
+  ): Promise<UserDTO> {
+    const {
+      where,
+      data,
+    } = params;
+
+    const updatedUser: UserModel = await this.prisma.user.update({
+      data,
+      where,
+    });
+
+    const {
+      password: _password,
+      ...result
+    } = updatedUser;
+
+    return result;
+  }
+
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<UserModel> {
+    return this.prisma.user.delete({
+      where,
+    });
+  }
+
+  async checkUserPassword(
+    params: {
+      email: string;
+      password: string;
+    }
+  ): Promise<UserDTO> {
+    const foundUser: UserModel | null = await this.prisma.user.findUnique({
+      where: {
+        email: params.email,
+      },
+    });
+
+    if(!foundUser) {
+      throw new HttpException('User not found', 404);
+    }
+
+    const checkPassword = await bcryptCheck(foundUser.password, params.password);
+
+    if(!checkPassword) {
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    const {
+      password: _password,
+      ...result
+    } = foundUser;
+
+    return result;
+  }
+}
